@@ -1,0 +1,25 @@
+# Crear una nueva relación usuario-producto
+POST http://localhost:3005/api/usuario_con_producto
+Content-Type: application/json
+
+{
+  "id_cliente": "64f8c06f42a0b8e6f52f004e",  // Cambia por un ID válido
+  "id_producto": "64f8c06f42a0b8e6f52f004f"   // Cambia por un ID válido
+}
+
+###
+
+# Obtener todas las relaciones usuario-producto
+GET http://localhost:3005/api/usuario_con_producto
+
+###
+
+# Obtener una relación usuario-producto por ID
+GET http://localhost:3005/api/usuario_con_producto/64f8c06f42a0b8e6f52f004e
+# Reemplaza el ID con uno válido
+
+###
+
+# Eliminar una relación usuario-producto por ID
+DELETE http://localhost:3005/api/usuario_con_producto/64f8c06f42a0b8e6f52f004e
+# Reemplaza el ID con uno válido
