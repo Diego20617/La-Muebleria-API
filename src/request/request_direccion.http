@@ -1,0 +1,28 @@
+###  
+
+POST http://localhost:3005/api/direccion HTTP/1.1
+Content-Type: application/json
+
+{
+    "direccion" : "Calle 25 de Mayo #123, Colonia Centro - Ciudad de México."
+}
+
+###
+GET http://localhost:3005/api/direccion HTTP/1.1 
+#metodo para mostrar todos los datos existentes en la base de datos
+
+###
+GET http://localhost:3005/api/direccion/673fca2f135a6a729dcd77c6 HTTP/1.1
+#Metodo para mostrar los datos de un id especifico
+
+###
+PUT http://localhost:3005/api/direccion/673fca2f135a6a729dcd77c6 HTTP/1.1
+Content-Type: application/json
+
+{
+    "direccion" : "Avenida Libertad 456, Piso 3 - Barrio San Martín, Córdoba."
+}
+
+###
+DELETE http://localhost:3005/api/direccion/673fca2f135a6a729dcd77c6 HTTP/1.1
+#Metodo para borrar los datos de un id en especifico
