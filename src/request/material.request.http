@@ -1,0 +1,16 @@
+###
+POST http://localhost:3005/api/material HTTP/1.1
+Content-Type: application/json
+
+{
+    "material": "Madera"
+}
+
+###
+GET http://localhost:3005/api/material HTTP/1.1
+
+###
+GET http://localhost:3005/api/material/645cd12c3f791aa71b567c20 HTTP/1.1
+
+###
+DELETE http://localhost:3005/api/material/645cd12c3f791aa71b567c20 HTTP/1.1
