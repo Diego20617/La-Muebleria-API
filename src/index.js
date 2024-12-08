@@ -13,7 +13,8 @@ import inventarioRoutes from "./routess/InventarioRoutes.js";
 import ResenaRoutes from "./routess/ResenaRoutes.js";
 import UsuarioConProductoRoutes from "./routess/UsuarioConProductoRoutes.js";
 import MaterialRoutes from "./routess/MaterialRoutes.js";
-import tipo_producto_routes from "./routess/tipo_producto_routes.js"
+import tipo_producto_routes from "./routess/tipo_producto_routes.js";
+import autenticationRouter from "./routess/autenticationRoutes.js"
 import { swaggerUI, swaggerJSDOCs, swaggerSpec } from "./config/swagger.js";
 
 const app = express();
@@ -42,6 +43,7 @@ app.use("/api", ResenaRoutes);
 app.use("/api", UsuarioConProductoRoutes);
 app.use("/api", MaterialRoutes);
 app.use("/api", tipo_producto_routes);
+app.use('/api/autenticacion', autenticationRouter);
 
 
 // Middleware para manejar datos URL-encoded
