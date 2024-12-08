@@ -20,14 +20,14 @@ export const createRol = [
 ];
 
 
-//2.Obtener
+//2.Obtener todos loa roles
 export const getRol = (req, resp) => {
-    rol_model
-        .find()
-        .then((data) => resp.json (data))
-        .catch((error) => resp.json({message: error }));
+  rol_model
+    .find()
+    .populate("id_estado", "nombre") // Traer solo el campo 'nombre' del estado
+    .then((data) => resp.json(data))
+    .catch((error) => resp.status(500).json({ message: error.message }));
 };
-
 
 //3.Obtener por id
 export const getAllRol = [
@@ -35,7 +35,7 @@ export const getAllRol = [
   async (req, resp) => {
     const { id } = req.params;
     try {
-      const rol = await rol_model.findById(id); //Metodo usado para buscar un documento de una coleccion
+      const rol = await rol_model.findById(id).populate("id_estado", "estado");
       if (!rol) {
         return resp.status(404).json({
           message: "Rol no encontrado",
@@ -50,12 +50,13 @@ export const getAllRol = [
   },
 ];
 
+
 export const getAllRolWithEstado = [
   validatorHandler(getRolSchema, "params"),
   async (req, resp) => {
     const { id } = req.params;
     try {
-      const rol = await rol_model.findById(id).populate("estado"); // Usar populate para incluir las categorías relacionadas
+      const rol = await rol_model.findById(id).populate("id_estado", "estado");
       if (!rol) {
         return resp.status(404).json({ message: "Rol no encontrado" });
       }
@@ -67,6 +68,7 @@ export const getAllRolWithEstado = [
 ];
 
 
+
 //4.Actualizar
 export const updateRol = [
   validatorHandler(getRolSchema, "params"),
@@ -74,33 +76,31 @@ export const updateRol = [
   async (req, resp) => {
     const { id } = req.params;
     const { rol, id_estado } = req.body;
+
     try {
-      // Obtener el rol actual
-      const currentRol = await rol_model.findById(id);
-      if (!currentRol) {
+      // Actualizar y devolver el documento
+      const rolUpdate = await rol_model
+        .findByIdAndUpdate(
+          id,
+          { rol, id_estado },
+          { new: true } // Devuelve el documento actualizado
+        )
+        .populate("id_estado", "estado"); // Solo traer 'nombre' del estado
+
+      if (!rolUpdate) {
         return resp.status(404).json({ message: "Rol no encontrado" });
       }
-      // Si no se proporciona el id_estado en la solicitud, mantener el id_estado actual
-      const updateEstado =
-        id_estado !== undefined ? id_estado : currentRol.id_estado;
-      const rolUpdate = await rol_model.updateOne(
-        { _id: id },
-        { $set: { rol, id_estado: updateEstado } }
-      );
-      if (rolUpdate.matchedCount === 0) {
-        return resp.status(404).json({ message: "Rol no encontrado" });
-      }
-      if (rolUpdate.modifiedCount === 0) {
-        return resp
-          .status(400)
-          .json({ message: "No se realizaron cambios en el rol" });
-      }
-      resp.status(200).json({ message: "Rol actualizado correctamente" });
+
+      resp.status(200).json({
+        message: "Rol actualizado correctamente",
+        data: rolUpdate,
+      });
     } catch (error) {
       resp.status(500).json({ message: error.message });
     }
   },
 ];
+
 
 
 //5.Borrar

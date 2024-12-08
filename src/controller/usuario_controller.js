@@ -8,28 +8,70 @@ import {
   deleteUsuarioSchema,
 } from "../validators/usuarioValidatorDTO.js";
 
+const SALT_ROUNDS = 10;
 
-//1. res.send("Esta ruta esta pensada para crear un usuario nuevo");
 export const createUsuario = [
   validatorHandler(createUsuarioSchema, "body"),
   async (req, res) => {
-    const usuario = new usuario_model(req.body);
-    await usuario
-      .save()
-      .then((data) => res.status(201).json(data)) // Cambio el código de estado a 201 para indicar que se creó un nuevo recurso
-      .catch((error) => res.status(500).json({ message: error.message })); // Asegúrate de enviar `error.message` para obtener un mensaje más claro
+    try {
+      const { nombres, apellidos, correo, num_doc, contraseña, id_rol } = req.body;
+
+      // Verificar que la contraseña esté presente
+      if (!contraseña) {
+        return res.status(400).json({ message: "La contraseña es requerida" });
+      }
+
+      // Hashear la contraseña
+      const hashedPassword = await bcrypt.hash(contraseña, SALT_ROUNDS);
+
+      // Crear nuevo usuario
+      let nuevoUsuario = new Usuario({
+        nombres,
+        apellidos,
+        correo,
+        num_doc,
+        contraseña: hashedPassword, // Guardamos la contraseña hasheada
+        id_rol,
+      });
+
+      // Guardar usuario en la base de datos
+      await nuevoUsuario.save();
+
+      res.status(201).json({
+        message: "Usuario creado exitosamente",
+        data: nuevoUsuario, // Opcionalmente puedes devolver el usuario creado
+      });
+    } catch (err) {
+      console.error(err);
+      res.status(500).json({ message: "Error al crear el usuario:"});
+    }
   },
 ];
 
 
 
-//2.Obtener
-export const getUsuario = (req, resp) => {
-    usuario_model
-        .find() //Metodo para buscar todos los docs de una coleccion
-        .then((data) => resp.json(data))
-        .catch((error) => resp.json({ message: error }));
+// 2. Obtener todos los usuarios con el rol completo
+export const getUsuario = async (req, resp) => {
+  try {
+    const usuarios = await usuario_model
+      .find()
+      .populate("id_rol", "rol") // Traer solo el campo 'nombre' del rol
+      .lean(); // Convierte el resultado en un objeto JavaScript puro
+
+    // Transformar el campo 'id_rol' para que sea un string con el nombre del rol
+    const usuariosConRolNombre = usuarios.map((usuario) => {
+      return {
+        ...usuario,
+        id_rol: usuario.id_rol ? usuario.id_rol.rol : null, // Extraer solo el nombre
+      };
+    });
+
+    resp.status(200).json(usuariosConRolNombre);
+  } catch (error) {
+    resp.status(500).json({ message: error.message });
+  }
 };
+
 
 //3.Obtener por id
 export const getAllUsuario = [
@@ -38,12 +80,17 @@ export const getAllUsuario = [
     const { id } = req.params;
     try {
       //Metodo usado para buscar un documento de una coleccion
-      const usuario = await usuario_model.findById(id);
+      const usuario = await usuario_model
+      .findById(id)
+      .populate("id_rol", "rol") //Traera el nombre del rol
+      .lean(); //convierte el objeto de json a javascript 
       if (!usuario) {
         return resp.status(404).json({
           message: "Usuario no encontrado",
         });
       }
+  // Ajustar el campo 'id_rol' para que sea un string
+  usuario.id_rol = usuario.id_rol ? usuario.id_rol.rol : null;
       resp.json(usuario);
     } catch (error) {
       resp.status(500).json({
@@ -58,9 +105,10 @@ export const getAllUusarioWithRol = [
   async (req, resp) => {
     const { id } = req.params;
     try {
-      const usuario = await usuario_model.findById(id).populate("rol"); // Usar populate para incluir las categorías relacionadas
+      // Usar populate con el nombre correcto del campo 'id_rol'
+      const usuario = await usuario_model.findById(id).populate("id_rol", "rol"); 
       if (!usuario) {
-        return resp.status(404).json({ message: "Uusario no encontrado" });
+        return resp.status(404).json({ message: "Usuario no encontrado" });
       }
       resp.json(usuario);
     } catch (error) {
@@ -70,8 +118,7 @@ export const getAllUusarioWithRol = [
 ];
 
 
-
-// 4. Actualizar
+// 4. Actualizar usuario y devolver el rol completo
 export const updateUsuario = [
   validatorHandler(getUsuarioSchema, "params"),
   validatorHandler(updateUsuarioSchema, "body"),
@@ -89,15 +136,15 @@ export const updateUsuario = [
       // Si la contraseña se ha cambiado, hacer el hash de la nueva contraseña
       let hashedPassword = currentUsuario.contraseña;
       if (contraseña) {
-        const salt = await bcrypt.genSalt(10);  // Generar un salt con bcrypt
-        hashedPassword = await bcrypt.hash(contraseña, salt);  // Hacer el hash de la nueva contraseña
+        const salt = await bcrypt.genSalt(10); // Generar un salt con bcrypt
+        hashedPassword = await bcrypt.hash(contraseña, salt); // Hacer el hash de la nueva contraseña
       }
 
       // Si no se proporciona id_rol en la solicitud, mantener el id_rol actual
-      const updateUsuario = id_rol !== undefined ? id_rol : currentUsuario.id_rol;
+      const updatedRol = id_rol !== undefined ? id_rol : currentUsuario.id_rol;
 
       // Actualizar el usuario en la base de datos
-      const usuarioUpdate = await usuario_model.updateOne(
+      await usuario_model.updateOne(
         { _id: id },
         {
           $set: {
@@ -106,26 +153,32 @@ export const updateUsuario = [
             correo,
             num_doc,
             contraseña: hashedPassword, // Actualizar la contraseña hasheada
-            id_rol: updateUsuario,
+            id_rol: updatedRol,
           },
         }
       );
 
-      // Verificar si se encontró el usuario y si se realizaron cambios
-      if (usuarioUpdate.matchedCount === 0) {
-        return resp.status(404).json({ message: "Usuario no encontrado" });
+      // Obtener el usuario actualizado y popular solo el nombre del rol
+      const usuarioActualizado = await usuario_model
+        .findById(id)
+        .populate("id_rol", "rol") // Traer solo el campo 'nombre' del rol
+        .lean(); // Convertir el documento en un objeto plano
+
+      // Si el rol existe, reemplazar el id_rol con solo el nombre del rol
+      if (usuarioActualizado.id_rol) {
+        usuarioActualizado.id_rol = usuarioActualizado.id_rol.rol;
       }
 
-      if (usuarioUpdate.modifiedCount === 0) {
-        return resp.status(400).json({ message: "No se realizaron cambios en el usuario" });
-      }
-
-      resp.status(200).json({ message: "Usuario actualizado correctamente" });
+      resp.status(200).json({
+        message: "Usuario actualizado correctamente",
+        data: usuarioActualizado,
+      });
     } catch (error) {
       resp.status(500).json({ message: error.message });
     }
   },
 ];
+
 
 
 //5.Borrar
