@@ -22,6 +22,13 @@ const options = {
       },
     ],
     components: {
+      securitySchemes: {
+        BearerAuth: {
+          type: "apiKey",
+          in: "header",
+          name: "Authorization",
+        },
+      },
       schemas: {
         
         tip_doc: {
@@ -47,6 +54,11 @@ const options = {
         },
       },
     },
+    security:[
+      {
+        BearerAuth: [],
+      },
+    ],
   },
   apis: [
     "./src/routess/*.js" // Ruta de las definiciones de las rutas
@@ -66,4 +78,5 @@ export const swaggerJSDOCs = (app, port) => {
 };
 
 export { swaggerSpec, swaggerUI };
+
 
