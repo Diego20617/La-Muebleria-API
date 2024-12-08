@@ -6,6 +6,7 @@ import {
   getEstado, 
   createEstado 
 } from '../controller/estado_controller.js';
+import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
 
 const router = express.Router();
 
@@ -41,7 +42,7 @@ const router = express.Router();
  *       200:
  *         description: Tipo de estado creado exitosamente
  */
-router.post("/estado", createEstado);
+router.post("/estado", verifyJWT, verifyRole(['Administrador']), createEstado);
 
 /**
  * @swagger
@@ -59,7 +60,7 @@ router.post("/estado", createEstado);
  *               items:
  *                 $ref: '#/components/schemas/estado'
  */
-router.get("/estado", getEstado);
+router.get("/estado", verifyJWT, verifyRole(['Administrador', 'Usuario']), getEstado);
 
 /**
  * @swagger
@@ -84,7 +85,7 @@ router.get("/estado", getEstado);
  *       404:
  *         description: Estado no encontrado
  */
-router.get("/estado/:id", getAllEstado);
+router.get("/estado/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']), getAllEstado);
 
 /**
  * @swagger
@@ -118,7 +119,7 @@ router.get("/estado/:id", getAllEstado);
  *       404:
  *         description: Estado no encontrado
  */
-router.put("/estado/:id", updateEstado);
+router.put("/estado/:id", verifyJWT, verifyRole(['Administrador']), updateEstado);
 
 /**
  * @swagger
@@ -149,6 +150,6 @@ router.put("/estado/:id", updateEstado);
  *       500:
  *         description: Error al eliminar el tipo de estado
  */
-router.delete("/estado/:id", deleteEstado);
+router.delete("/estado/:id", verifyJWT, verifyRole(['Administrador']), deleteEstado);
 
 export default router;

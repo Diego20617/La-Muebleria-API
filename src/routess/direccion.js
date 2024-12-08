@@ -6,6 +6,7 @@ import {
   updateDireccion, 
   deleteDireccion 
 } from '../controller/direccion_controller.js';
+import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
 
 const router = express.Router();
 
@@ -41,7 +42,7 @@ const router = express.Router();
  *       200:
  *         description: Dirección creada exitosamente
  */
-router.post("/direccion", createDireccion);
+router.post("/direccion", verifyJWT, verifyRole(['Administrador']), createDireccion);
 
 /**
  * @swagger
@@ -59,7 +60,7 @@ router.post("/direccion", createDireccion);
  *               items:
  *                 $ref: '#/components/schemas/Direccion'
  */
-router.get("/direccion", getDireccion);
+router.get("/direccion", verifyJWT, verifyRole(['Administrador', 'Usuario']), getDireccion);
 
 /**
  * @swagger
@@ -84,7 +85,7 @@ router.get("/direccion", getDireccion);
  *       404:
  *         description: Dirección no encontrada
  */
-router.get("/direccion/:id", getAllDireccion);
+router.get("/direccion/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']), getAllDireccion);
 
 /**
  * @swagger
@@ -111,7 +112,7 @@ router.get("/direccion/:id", getAllDireccion);
  *       404:
  *         description: Dirección no encontrada
  */
-router.put("/direccion/:id", updateDireccion);
+router.put("/direccion/:id", verifyJWT, verifyRole(['Administrador']), updateDireccion);
 
 /**
  * @swagger
@@ -134,6 +135,6 @@ router.put("/direccion/:id", updateDireccion);
  *       500:
  *         description: Error al eliminar la dirección
  */
-router.delete("/direccion/:id", deleteDireccion);
+router.delete("/direccion/:id", verifyJWT, verifyRole(['Administrador']), deleteDireccion);
 
 export default router;

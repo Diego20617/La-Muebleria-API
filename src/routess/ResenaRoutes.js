@@ -5,6 +5,7 @@ import {
     getResena,
     deleteResena,
 } from "../controller/ResenaController.js";
+import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
 
 const router = express.Router();
 
@@ -53,7 +54,7 @@ const router = express.Router();
 *         description: Error de validación
 */
 // Crear una reseña
-router.post("/resena", createResena);
+router.post("/resena", verifyJWT, verifyRole(['Administrador', 'Usuario']), createResena);
 
 /**
 * @swagger
@@ -74,7 +75,7 @@ router.post("/resena", createResena);
 *         description: Error al obtener las reseñas
 */
 // Obtener todas las reseñas
-router.get("/resena", getAllResena);
+router.get("/resena", verifyJWT, verifyRole(['Administrador', 'Usuario']), getAllResena);
 
 /**
 * @swagger
@@ -102,7 +103,7 @@ router.get("/resena", getAllResena);
 *         description: Error al obtener la reseña
 */
 // Obtener una reseña por ID
-router.get("/resena/:id", getResena);
+router.get("/resena/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']), getResena);
 
 /**
 * @swagger
@@ -126,7 +127,7 @@ router.get("/resena/:id", getResena);
 *         description: Error al eliminar la reseña
 */
 // Eliminar una reseña
-router.delete("/resena/:id", deleteResena);
+router.delete("/resena/:id", verifyJWT, verifyRole(['Administrador']), deleteResena);
 
 export default router;
 

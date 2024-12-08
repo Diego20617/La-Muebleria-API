@@ -1,6 +1,6 @@
 import express from "express";
 import { deleteUsuario, updateUsuario, getAllUsuario, getUsuario, createUsuario, getAllUusarioWithRol } from '../controller/usuario_controller.js'
-
+import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
 const router = express.Router();
 
 /**
@@ -59,6 +59,8 @@ const router = express.Router();
 
 */
 
+
+
 /**
 * @swagger
 * /usuario:
@@ -81,32 +83,82 @@ const router = express.Router();
 
  */
 //Creamos el ler endpoint
-router.post("/usuario", createUsuario);
+router.post("/usuario", verifyJWT, verifyRole(['Administrador']), createUsuario);
 
 
 /**
-* @swagger
-* /usuario:
-*  get:
-*    summary: Retorna los registros de los usuarios
-*    tags: [usuario]
-*    responses:
-*      200:
-*        description: Esta es la lista de usuarios registrados
-*        content:
-*          application/json:
-*            schema:
-*            type: array
-*            items:
-*            $ref: '#/components/schemas/usuario'
-
+ * @swagger
+ * /usuario:
+ *   get:
+ *     summary: Retorna los registros de los usuarios
+ *     tags: [usuario]
+ *     responses:
+ *       200:
+ *         description: Esta es la lista de usuarios registrados
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 $ref: '#/components/schemas/usuario'
+ * 
  */
-//2.Creamos la ruta para obtener todos los documentos de mi bdd en la colection users
-router.get("/usuario", getUsuario);
+//2.Creamos la ruta para obtener todos los documentos de mi bdd en la colection usuario
+router.get("/usuario",verifyJWT, verifyRole(['Administrador']), getUsuario);
 
-// 3.Creamos la ruta para consultar un documento de mi bdd en la coleccion users
-router.get("/usuario/:id", getAllUsuario);
-router.get("/usuario/:id/rol", getAllUusarioWithRol);
+// 3.Creamos la ruta para consultar un documento de mi bdd en la coleccion usuario
+/**
+ * @swagger
+ * /usuario/{id}:
+ *   get:
+ *     summary: Retorna un usuario específico por ID
+ *     tags: [usuario]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID del usuario a retornar
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Usuario encontrado
+ *         content:
+ *           application/json:
+ *             schema:
+ *               $ref: '#/components/schemas/usuario'
+ *       404:
+ *         description: Usuario no encontrado
+ */
+router.get("/usuario/:id", verifyJWT, verifyRole(['Administrador']), getAllUsuario);
+
+
+/**
+ * @swagger
+ * /usuario/{id}/rol:
+ *   get:
+ *     summary: Retorna los roles de un usuario específico por ID
+ *     tags: [usuario]
+ *     parameters:
+ *       - name: id
+ *         in: path
+ *         required: true
+ *         description: ID del usuario para obtener sus roles
+ *         schema:
+ *           type: string
+ *     responses:
+ *       200:
+ *         description: Roles encontrados para el usuario
+ *         content:
+ *           application/json:
+ *             schema:
+ *               type: array
+ *               items:
+ *                 type: string
+ *       404:
+ *         description: Usuario no encontrado
+ */
+router.get("/usuario/:id/rol", verifyJWT, verifyRole(['Administrador']), getAllUusarioWithRol);
 
 /**
 * @swagger
@@ -139,8 +191,8 @@ router.get("/usuario/:id/rol", getAllUusarioWithRol);
 
 */
 
-// 4.Creamos la ruta para actualizar un documento en la coleccion users
-router.put("/usuario/:id", updateUsuario);
+// 4.Creamos la ruta para actualizar un documento en la coleccion usuario
+router.put("/usuario/:id",verifyJWT, verifyRole(['Administrador']), updateUsuario);
 
 
 /**
@@ -174,7 +226,7 @@ router.put("/usuario/:id", updateUsuario);
 
 */
 
-// 5.Creamos la ruta para borrar un documento de mi bdd en la coleccion users
-router.delete("/usuario/:id", deleteUsuario);
+// 5.Creamos la ruta para borrar un documento de mi bdd en la coleccion usuario
+router.delete("/usuario/:id", verifyJWT, verifyRole(['Administrador']), deleteUsuario);
 
 export default router;

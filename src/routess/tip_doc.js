@@ -1,5 +1,6 @@
 import express from "express";
 import { createTipDoc, getTipDoc, getAllTipDoc, updateTipDoc, getAllTipDocWithUsuarios, deleteTipDoc} from '../controller/tip_doc_controller.js'
+import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
 
 const router = express.Router(); 
 /**
@@ -45,7 +46,7 @@ const router = express.Router();
  *       200:
  *         description: Tipo de documento creado exitosamente
  */
-router.post("/tip_doc", createTipDoc);
+router.post("/tip_doc", verifyJWT, verifyRole(['Administrador']), createTipDoc);
 
 /**
  * @swagger
@@ -64,7 +65,7 @@ router.post("/tip_doc", createTipDoc);
  *               items:
  *                 $ref: '#/components/schemas/tip_doc'
  */
-router.get("/tip_doc", getTipDoc);
+router.get("/tip_doc", verifyJWT, verifyRole(['Administrador', 'Usuario']), getTipDoc);
 
 /**
  * @swagger
@@ -90,7 +91,7 @@ router.get("/tip_doc", getTipDoc);
  *       404:
  *         description: Tipo de documento no encontrado
  */
-router.get("/tip_doc/:id", getAllTipDoc);
+router.get("/tip_doc/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']), getAllTipDoc);
 
 /**
  * @swagger
@@ -122,7 +123,7 @@ router.get("/tip_doc/:id", getAllTipDoc);
  *       404:
  *         description: Tipo de documento no encontrado
  */
-router.get("/tip_doc/:id/usuario", getAllTipDocWithUsuarios);
+router.get("/tip_doc/:id/usuario", verifyJWT, verifyRole(['Administrador']),  getAllTipDocWithUsuarios);
 
 /**
  * @swagger
@@ -150,7 +151,7 @@ router.get("/tip_doc/:id/usuario", getAllTipDocWithUsuarios);
  *       404:
  *         description: Tipo de documento no encontrado
  */
-router.put("/tip_doc/:id", updateTipDoc);
+router.put("/tip_doc/:id", verifyJWT, verifyRole(['Administrador']), updateTipDoc);
 
 /**
  * @swagger
@@ -182,6 +183,6 @@ router.put("/tip_doc/:id", updateTipDoc);
  *       500:
  *         description: Error al eliminar el tipo de documento
  */
-router.delete("/tip_doc/:id", deleteTipDoc);
+router.delete("/tip_doc/:id", verifyJWT, verifyRole(['Administrador']), deleteTipDoc);
 
 export default router;

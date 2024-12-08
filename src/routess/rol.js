@@ -7,6 +7,7 @@ import {
   getAllRolWithEstado, 
   deleteRol 
 } from '../controller/rol_controller.js';
+import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
 
 const router = express.Router();
 
@@ -53,7 +54,7 @@ const router = express.Router();
  *       200:
  *         description: Tipo de rol creado exitosamente
  */
-router.post("/rol", createRol);
+router.post("/rol", verifyJWT, verifyRole(['Administrador']), createRol);
 
 /**
  * @swagger
@@ -71,7 +72,7 @@ router.post("/rol", createRol);
  *               items:
  *                 $ref: '#/components/schemas/Rol'
  */
-router.get("/rol", getRol);
+router.get("/rol", verifyJWT, verifyRole(['Administrador', 'Usuario']), getRol);
 
 /**
  * @swagger
@@ -96,7 +97,7 @@ router.get("/rol", getRol);
  *       404:
  *         description: Rol no encontrado
  */
-router.get("/rol/:id", getAllRol);
+router.get("/rol/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']), getAllRol);
 
 /**
  * @swagger
@@ -123,7 +124,7 @@ router.get("/rol/:id", getAllRol);
  *       404:
  *         description: Rol no encontrado
  */
-router.get("/rol/:id/estado", getAllRolWithEstado);
+router.get("/rol/:id/estado", verifyJWT, verifyRole(['Administrador']), getAllRolWithEstado);
 
 /**
  * @swagger
@@ -161,7 +162,7 @@ router.get("/rol/:id/estado", getAllRolWithEstado);
  *       404:
  *         description: Rol no encontrado
  */
-router.put("/rol/:id", updateRol);
+router.put("/rol/:id", verifyJWT, verifyRole(['Administrador']), updateRol);
 
 /**
  * @swagger
@@ -192,7 +193,7 @@ router.put("/rol/:id", updateRol);
  *       500:
  *         description: Error al eliminar el rol
  */
-router.delete("/rol/:id", deleteRol);
+router.delete("/rol/:id", verifyJWT, verifyRole(['Administrador']), deleteRol);
 
 export default router;
 

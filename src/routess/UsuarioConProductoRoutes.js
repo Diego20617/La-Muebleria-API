@@ -5,6 +5,7 @@ import {
     getUsuarioConProducto,
     deleteUsuarioConProducto,
 } from "../controller/UsuarioConProductoController.js";
+import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
 
 const router = express.Router();
 
@@ -58,7 +59,7 @@ const router = express.Router();
 *         description: Error de validación
 */
 // Crear una relación usuario-producto
-router.post("/usuario-con-producto", createUsuarioConProducto);
+router.post("/usuario-con-producto", verifyJWT, verifyRole(['Administrador', 'Usuario']), createUsuarioConProducto);
 
 /**
 * @swagger
@@ -79,7 +80,7 @@ router.post("/usuario-con-producto", createUsuarioConProducto);
 *         description: Error al obtener los datos
 */
 // Obtener todas las relaciones usuario-producto
-router.get("/usuario-con-producto", getAllUsuarioConProducto);
+router.get("/usuario-con-producto", verifyJWT, verifyRole(['Administrador']), getAllUsuarioConProducto);
 
 /**
 * @swagger
@@ -107,7 +108,7 @@ router.get("/usuario-con-producto", getAllUsuarioConProducto);
 *         description: Error al obtener los datos
 */
 // Obtener una relación usuario-producto por ID
-router.get("/usuario-con-producto/:id", getUsuarioConProducto);
+router.get("/usuario-con-producto/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']), getUsuarioConProducto);
 
 /**
 * @swagger
@@ -131,7 +132,7 @@ router.get("/usuario-con-producto/:id", getUsuarioConProducto);
 *         description: Error al eliminar la relación
 */
 // Eliminar una relación usuario-producto
-router.delete("/usuario-con-producto/:id", deleteUsuarioConProducto);
+router.delete("/usuario-con-producto/:id", verifyJWT, verifyRole(['Administrador']), deleteUsuarioConProducto);
 
 export default router;
 

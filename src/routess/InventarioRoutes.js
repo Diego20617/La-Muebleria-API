@@ -5,6 +5,8 @@ import {
     getInventario,
     deleteInventario,
 } from "../controller/InventarioController.js";
+import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
+
 
 const router = express.Router();
 
@@ -58,7 +60,7 @@ const router = express.Router();
 *         description: Error de validación
 */
 // Ruta para crear un registro de inventario
-router.post("/inventario", createInventario);
+router.post("/inventario", verifyJWT, verifyRole(['Administrador']), createInventario);
 
 /**
 * @swagger
@@ -79,7 +81,7 @@ router.post("/inventario", createInventario);
 *         description: Error al obtener los registros de inventario
 */
 // Ruta para obtener todos los registros de inventario
-router.get("/inventario", getAllInventarios);
+router.get("/inventario", verifyJWT, verifyRole(['Administrador', 'Usuario']), getAllInventarios);
 
 /**
 * @swagger
@@ -107,7 +109,7 @@ router.get("/inventario", getAllInventarios);
 *         description: Error al obtener el registro de inventario
 */
 // Ruta para obtener un registro de inventario por ID
-router.get("/inventario/:id", getInventario);
+router.get("/inventario/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']),getInventario);
 
 /**
 * @swagger
@@ -131,7 +133,7 @@ router.get("/inventario/:id", getInventario);
 *         description: Error al eliminar el registro de inventario
 */
 // Ruta para eliminar un registro de inventario por ID
-router.delete("/inventario/:id", deleteInventario);
+router.delete("/inventario/:id", verifyJWT, verifyRole(['Administrador']), deleteInventario);
 
 export default router;
 

@@ -6,7 +6,7 @@ import {
     updateTipoProducto,
     deleteTipoProducto,
 } from "../controller/tipo_producto_controller.js";
-
+import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
 const router = express.Router();
 
 /**
@@ -55,7 +55,7 @@ const router = express.Router();
 *         description: Error de validación
 */
 // Crear un tipo de producto
-router.post("/tipo_producto", createTipoProducto);
+router.post("/tipo_producto", verifyJWT, verifyRole(['Administrador']), createTipoProducto);
 
 /**
 * @swagger
@@ -76,7 +76,7 @@ router.post("/tipo_producto", createTipoProducto);
 *         description: Error al obtener los datos
 */
 // Obtener todos los tipos de producto
-router.get("/tipo_producto", getTipoProducto);
+router.get("/tipo_producto", verifyJWT, verifyRole(['Administrador', 'Usuario']), getTipoProducto);
 
 /**
 * @swagger
@@ -104,7 +104,7 @@ router.get("/tipo_producto", getTipoProducto);
 *         description: Error al obtener el dato
 */
 // Obtener un tipo de producto por ID
-router.get("/tipo_producto/:id", getAllTipoProducto);
+router.get("/tipo_producto/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']), getAllTipoProducto);
 
 /**
 * @swagger
@@ -138,7 +138,7 @@ router.get("/tipo_producto/:id", getAllTipoProducto);
 *         description: Error de validación
 */
 // Actualizar un tipo de producto
-router.put("/tipo_producto/:id", updateTipoProducto);
+router.put("/tipo_producto/:id", verifyJWT, verifyRole(['Administrador']), updateTipoProducto);
 
 /**
 * @swagger
@@ -162,6 +162,6 @@ router.put("/tipo_producto/:id", updateTipoProducto);
 *         description: Error al eliminar el tipo de producto
 */
 // Eliminar un tipo de producto
-router.delete("/tipo_producto/:id", deleteTipoProducto);
+router.delete("/tipo_producto/:id", verifyJWT, verifyRole(['Administrador']), deleteTipoProducto);
 
 export default router;

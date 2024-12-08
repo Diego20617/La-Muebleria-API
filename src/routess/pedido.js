@@ -7,6 +7,7 @@ import {
   getAllPedidodWithDireccion, 
   deletePedido 
 } from '../controller/pedido_controller.js';
+import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
 
 const router = express.Router();
 
@@ -50,7 +51,7 @@ const router = express.Router();
  *       200:
  *         description: Pedido creado exitosamente
  */
-router.post("/pedido", createPedido);
+router.post("/pedido", verifyJWT, verifyRole(['Administrador', 'Usuario']), createPedido);
 
 /**
  * @swagger
@@ -68,7 +69,7 @@ router.post("/pedido", createPedido);
  *               items:
  *                 $ref: '#/components/schemas/Pedido'
  */
-router.get("/pedido", getPedido);
+router.get("/pedido", verifyJWT, verifyRole(['Administrador']), getPedido);
 
 /**
  * @swagger
@@ -93,7 +94,7 @@ router.get("/pedido", getPedido);
  *       404:
  *         description: Pedido no encontrado
  */
-router.get("/pedido/:id", getAllPedido);
+router.get("/pedido/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']), getAllPedido);
 
 /**
  * @swagger
@@ -112,7 +113,7 @@ router.get("/pedido/:id", getAllPedido);
  *       200:
  *         description: Pedido con dirección encontrado
  */
-router.get("/pedido/:id/direccion", getAllPedidodWithDireccion);
+router.get("/pedido/:id/direccion", verifyJWT, verifyRole(['Administrador', 'Usuario']), getAllPedidodWithDireccion);
 
 /**
  * @swagger
@@ -152,7 +153,7 @@ router.get("/pedido/:id/direccion", getAllPedidodWithDireccion);
  *       404:
  *         description: Pedido no encontrado
  */
-router.put("/pedido/:id", updatePedido);
+router.put("/pedido/:id", verifyJWT, verifyRole(['Administrador']), updatePedido);
 
 /**
  * @swagger
@@ -175,6 +176,6 @@ router.put("/pedido/:id", updatePedido);
  *       500:
  *         description: Error al eliminar el pedido
  */
-router.delete("/pedido/:id", deletePedido);
+router.delete("/pedido/:id", verifyJWT, verifyRole(['Administrador']), deletePedido);
 
 export default router;

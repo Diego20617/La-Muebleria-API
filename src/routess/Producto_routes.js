@@ -16,6 +16,7 @@ import {
     deleteProductoSchema,
 } from "../validators/ProductoValidatorDTO.js";
 
+import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
 const router = express.Router();
 
 /**
@@ -75,7 +76,7 @@ const router = express.Router();
 */
 // Ruta para crear un producto
 router.post(
-    "/producto",
+    "/producto", verifyJWT, verifyRole(['Administrador']),
     validatorHandler(createProductoSchema, "body"),
     createProducto
 );
@@ -99,7 +100,7 @@ router.post(
 *         description: Error al obtener los productos
 */
 // Ruta para obtener todos los productos
-router.get("/producto", getProducto);
+router.get("/producto", verifyJWT, verifyRole(['Administrador', 'Usuario']), getProducto);
 
 /**
 * @swagger
@@ -128,7 +129,7 @@ router.get("/producto", getProducto);
 */
 // Ruta para obtener un producto por ID
 router.get(
-    "/producto/:id",
+    "/producto/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']),
     validatorHandler(getProductoSchema, "params"),
     getAllProducto
 );
@@ -160,7 +161,7 @@ router.get(
 */
 // Ruta para obtener un producto por ID con su tipo de producto
 router.get(
-    "/producto/withTipoProducto/:id",
+    "/producto/withTipoProducto/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']),
     validatorHandler(getProductoSchema, "params"),
     getAllProductoWithTipProducto
 );
@@ -196,7 +197,7 @@ router.get(
 */
 // Ruta para actualizar un producto por ID
 router.put(
-    "/producto/:id",
+    "/producto/:id", verifyJWT, verifyRole(['Administrador']),
     validatorHandler(getProductoSchema, "params"),
     validatorHandler(updateProductoSchema, "body"),
     updateProducto
@@ -225,7 +226,7 @@ router.put(
 */
 // Ruta para eliminar un producto por ID
 router.delete(
-    "/producto/:id",
+    "/producto/:id", verifyJWT, verifyRole(['Administrador']),
     validatorHandler(deleteProductoSchema, "params"),
     deleteProducto
 );

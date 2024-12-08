@@ -5,6 +5,7 @@ import {
     getMaterial,
     deleteMaterial,
 } from "../controller/MaterialController.js";
+import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
 
 const router = express.Router();
 
@@ -48,7 +49,7 @@ const router = express.Router();
 *         description: Error de validación
 */
 // Ruta para crear un material
-router.post("/material", createMaterial);
+router.post("/material", verifyJWT, verifyRole(['Administrador']), createMaterial);
 
 /**
 * @swagger
@@ -69,7 +70,7 @@ router.post("/material", createMaterial);
 *         description: Error al obtener los materiales
 */
 // Ruta para obtener todos los materiales
-router.get("/material", getAllMaterials);
+router.get("/material", verifyJWT, verifyRole(['Administrador', 'Usuario']), getAllMaterials);
 
 /**
 * @swagger
@@ -97,7 +98,7 @@ router.get("/material", getAllMaterials);
 *         description: Error al obtener el material
 */
 // Ruta para obtener un material por ID
-router.get("/material/:id", getMaterial);
+router.get("/material/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']), getMaterial);
 
 /**
 * @swagger
@@ -121,6 +122,6 @@ router.get("/material/:id", getMaterial);
 *         description: Error al eliminar el material
 */
 // Ruta para eliminar un material por ID
-router.delete("/material/:id", deleteMaterial);
+router.delete("/material/:id", verifyJWT, verifyRole(['Administrador']), deleteMaterial);
 
 export default router;
