@@ -25,8 +25,8 @@ export const getAllInventarios = async (req, res) => {
     try {
         const data = await inventario_model
             .find()
-            .populate("id_producto", "nombre") // Suponiendo que el modelo "producto" tiene un campo "nombre"
-            .populate("id_material", "material"); // Suponiendo que el modelo "material" tiene un campo "material"
+            .populate("id_producto", "producto") 
+            .populate("id_material", "material"); 
         res.json(data);
     } catch (error) {
         res.status(500).json({ message: error.message });

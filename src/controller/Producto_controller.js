@@ -1,4 +1,4 @@
-import producto_model from "../models/Producto_model.js";
+import productoSchema from "../models/Producto_model.js";
 import { validatorHandler } from "../middleware/validator.handler.js";
 import {
     createProductoSchema,
@@ -53,7 +53,7 @@ components:
 export const createProducto = [
     validatorHandler(createProductoSchema, "body"),
     async (req, res) => {
-        const producto = new producto_model(req.body);
+        const producto = new productoSchema(req.body);
         await producto
             .save()
             .then((data) => res.status(201).json(data)) // Cambio el código de estado a 201 para indicar que se creó un nuevo recurso
@@ -65,7 +65,7 @@ export const createProducto = [
 
 //2.Obtener
 export const getProducto = (req, resp) => {
-    producto_model
+    productoSchema
         .find() //Metodo para buscar todos los docs de una coleccion
         .then((data) => resp.json(data))
         .catch((error) => resp.json({ message: error }));
@@ -78,7 +78,7 @@ export const getAllProducto = [
         const { id } = req.params;
         try {
             //Metodo usado para buscar un documento de una coleccion
-            const producto = await producto_model.findById(id);
+            const producto = await productoSchema.findById(id);
             if (!producto) {
                 return resp.status(404).json({
                     message: "Usuario no encontrado",
@@ -98,7 +98,7 @@ export const getAllProductoWithTipProducto = [
     async (req, resp) => {
         const { id } = req.params;
         try {
-            const producto = await producto_model.findById(id).populate("tipo_producto"); // Usar populate para incluir las categorías relacionadas
+            const producto = await productoSchema.findById(id).populate("tipo_producto"); // Usar populate para incluir las categorías relacionadas
             if (!producto) {
                 return resp.status(404).json({ message: "Producto no encontrado" });
             }
@@ -120,14 +120,14 @@ export const updateProducto = [
         const { producto, dimensiones, descripcion, id_tipo_producto } = req.body;
         try {
             // Obtener el tipo de producto actual
-            const updateProducto = await producto_model.findById(id);
+            const updateProducto = await productoSchema.findById(id);
             if (!updateProducto) {
                 return resp.status(404).json({ message: "Tipo de producto no encontrdo" });
             }
             // Si no se proporcionan id del tipo de producto en la solicitud, mantener el id_usuario actual
             const updateTipProducto =
                 id_tipo_producto !== undefined ? id_tipo_producto : updateProducto.id_tipo_producto;
-            const tipProductopdate = await producto_model.updateOne(
+            const tipProductopdate = await productoSchema.updateOne(
                 { _id: id },
                 { $set: { producto, dimensiones, descripcion, id_tipo_producto: updateTipProducto } }
             );
@@ -154,7 +154,7 @@ export const deleteProducto = [
     async (req, resp) => {
         const { id } = req.params;
         try {
-            const result = await producto_model.deleteOne({ _id: id });
+            const result = await productoSchema.deleteOne({ _id: id });
             if (result.deletedCount === 0) {
                 return resp.status(404).json({ message: "Producto no encontrado" });
             }
