@@ -8,7 +8,7 @@ import estadoRoutes from "./routess/estado.js";
 import rolRoutes from "./routess/rol.js";
 import pedidoRoutes from "./routess/pedido.js";
 import direccionRoutes from "./routess/direccion.js";
-import productoRoutes from "./routess/producto_routes.js";
+import productoRoutes from "./routess/Producto_routes.js";
 import inventarioRoutes from "./routess/InventarioRoutes.js";
 import ResenaRoutes from "./routess/ResenaRoutes.js";
 import UsuarioConProductoRoutes from "./routess/UsuarioConProductoRoutes.js";
