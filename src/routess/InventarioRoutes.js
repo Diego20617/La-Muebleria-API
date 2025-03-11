@@ -60,7 +60,7 @@ const router = express.Router();
 *         description: Error de validación
 */
 // Ruta para crear un registro de inventario
-router.post("/inventario", verifyJWT, verifyRole(['Administrador']), createInventario);
+router.post("/inventario", createInventario);
 
 /**
 * @swagger
@@ -81,7 +81,7 @@ router.post("/inventario", verifyJWT, verifyRole(['Administrador']), createInven
 *         description: Error al obtener los registros de inventario
 */
 // Ruta para obtener todos los registros de inventario
-router.get("/inventario", verifyJWT, verifyRole(['Administrador', 'Usuario']), getAllInventarios);
+router.get("/inventario",  getAllInventarios);
 
 /**
 * @swagger
@@ -109,7 +109,7 @@ router.get("/inventario", verifyJWT, verifyRole(['Administrador', 'Usuario']), g
 *         description: Error al obtener el registro de inventario
 */
 // Ruta para obtener un registro de inventario por ID
-router.get("/inventario/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']),getInventario);
+router.get("/inventario/:id", getInventario);
 
 /**
 * @swagger
@@ -133,7 +133,7 @@ router.get("/inventario/:id", verifyJWT, verifyRole(['Administrador', 'Usuario']
 *         description: Error al eliminar el registro de inventario
 */
 // Ruta para eliminar un registro de inventario por ID
-router.delete("/inventario/:id", verifyJWT, verifyRole(['Administrador']), deleteInventario);
+router.delete("/inventario/:id",  deleteInventario);
 
 export default router;
 

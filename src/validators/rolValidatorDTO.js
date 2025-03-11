@@ -11,7 +11,7 @@ const id = Joi.string()
   });
 
 const rol = Joi.string()
-  .min(10)
+  .min(1)
   .max(90)
   .required()
   .pattern(/^[A-Za-záéíóúÁÉÍÓÚñÑ\s]+$/)

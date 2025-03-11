@@ -24,7 +24,7 @@ export const createRol = [
 export const getRol = (req, resp) => {
   rol_model
     .find()
-    .populate("id_estado", "nombre") // Traer solo el campo 'nombre' del estado
+    .populate("id_estado", "estado") // Traer solo el campo 'nombre' del estado
     .then((data) => resp.json(data))
     .catch((error) => resp.status(500).json({ message: error.message }));
 };

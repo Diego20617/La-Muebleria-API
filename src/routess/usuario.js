@@ -83,7 +83,7 @@ const router = express.Router();
 
  */
 //Creamos el ler endpoint
-router.post("/usuario", verifyJWT, verifyRole(['Administrador']), createUsuario);
+router.post("/usuario", createUsuario);
 
 
 /**
