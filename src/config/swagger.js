@@ -79,4 +79,3 @@ export const swaggerJSDOCs = (app, port) => {
 
 export { swaggerSpec, swaggerUI };
 
-
