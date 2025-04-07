@@ -1,4 +1,4 @@
-import productoSchema from "../models/Producto_model.js";
+import producto_model from "../models/Producto_model.js";
 import { validatorHandler } from "../middleware/validator.handler.js";
 import {
     createProductoSchema,
@@ -7,98 +7,103 @@ import {
     deleteProductoSchema,
 } from "../validators/ProductoValidatorDTO.js";
 
-
-
 /**
  * @swagger
-components:
-  schemas:
-    producto:
-      type: object
-      properties:
-        _id:
-          type: string
-          description: ID autogenerado en la BD
-        producto:
-          type: string
-          description: Nombre del producto
-        dimensiones:
-          type: Number
-          description: Dimensiones del producto
-        descripcion:
-          type: string
-          description: Descripcion del producto
-        id_tipo_producto:
- *           type: array
- *           items:
- *             type: object
- *             properties:
- *               id:
- *                 type: string
- *                 description: ID del tipo de producto relacionado
-      required:
-        - producto
-        - dimensiones
-        - descripcion
-        - id_tipo_producto
-      example:
-        producto: armario
-        dimensiones: 1.5
-        descripcion: mueble de madera
-        id_tipo_producto: 674538b861d4d2be66b1dde0
-*/
+ * components:
+ *   schemas:
+ *     producto:
+ *       type: object
+ *       properties:
+ *         _id:
+ *           type: string
+ *           description: ID autogenerado en la BD
+ *         name:
+ *           type: string
+ *           description: Nombre del producto
+ *         category:
+ *           type: string
+ *           description: Categoria del producto
+ *         price:
+ *           type: string
+ *           description: Precio del producto
+ *         stock:
+ *           type: string
+ *           description: Stock del producto
+ *         description:
+ *           type: string
+ *           description: Descripcion del producto
+ *         color:
+ *           type: string
+ *           description: Color del producto
+ *         dimensions:
+ *           type: object
+ *           properties:
+ *             height:
+ *               type: string
+ *               description: Alto (cm)
+ *             width:
+ *               type: string
+ *               description: Ancho (cm)
+ *             depth:
+ *               type: string
+ *               description: Profundidad (cm)
+ *           description: Dimensiones del producto
+ *         imageUrl:
+ *           type: string
+ *           description: URL de la imagen del producto
+ *         tipo_producto:
+ *           type: string
+ *           description: Del tipo de producto relacionado
+ *       required:
+ *         - name
+ *         - price
+ *         - description
+ *       example:
+ *         name: armario
+ *         category: Muebles
+ *         price: "150.00"
+ *         stock: "50"
+ *         description: mueble de madera
+ *         color: Marrón
+ *         dimensions:
+ *           height: "180"
+ *           width: "80"
+ *           depth: "50"
+ *         imageUrl: "https://ejemplo.com/imagen.jpg"
+ *         tipo_producto_id: 674538b861d4d2be66b1dde0
+ */
 
-
-//1. res.send("Esta ruta esta pensada para crear un usuario nuevo");
+//1. Crear producto
 export const createProducto = [
     validatorHandler(createProductoSchema, "body"),
     async (req, res) => {
-        const producto = new productoSchema(req.body);
-        await producto
-            .save()
-            .then((data) => res.status(201).json(data)) // Cambio el código de estado a 201 para indicar que se creó un nuevo recurso
-            .catch((error) => res.status(500).json({ message: error.message })); // Asegúrate de enviar error.message para obtener un mensaje más claro
+        try {
+            const producto = new producto_model(req.body);
+            await producto.save();
+            res.status(201).json(producto); // Código 201 para indicar creación exitosa
+        } catch (error) {
+            res.status(500).json({ message: error.message });
+        }
     },
 ];
 
-
-
-//2.Obtener
-export const getProducto = (req, resp) => {
-    productoSchema
-        .find() //Metodo para buscar todos los docs de una coleccion
-        .then((data) => resp.json(data))
-        .catch((error) => resp.json({ message: error }));
+//2. Obtener todos los productos
+export const getProducto = async (req, resp) => {
+    try {
+        const productos = await producto_model.find();
+        resp.json(productos);
+    } catch (error) {
+        resp.status(500).json({ message: error.message });
+    }
 };
 
-//3.Obtener por id
+//3. Obtener producto por ID
 export const getAllProducto = [
     validatorHandler(getProductoSchema, "params"),
     async (req, resp) => {
         const { id } = req.params;
         try {
-            //Metodo usado para buscar un documento de una coleccion
-            const producto = await productoSchema.findById(id);
-            if (!producto) {
-                return resp.status(404).json({
-                    message: "Usuario no encontrado",
-                });
-            }
-            resp.json(producto);
-        } catch (error) {
-            resp.status(500).json({
-                message: error.message,
-            });
-        }
-    },
-];
-
-export const getAllProductoWithTipProducto = [
-    validatorHandler(getProductoSchema, "params"),
-    async (req, resp) => {
-        const { id } = req.params;
-        try {
-            const producto = await productoSchema.findById(id).populate("tipo_producto"); // Usar populate para incluir las categorías relacionadas
+            const producto = await producto_model.findById(id);
             if (!producto) {
                 return resp.status(404).json({ message: "Producto no encontrado" });
             }
@@ -109,52 +114,48 @@ export const getAllProductoWithTipProducto = [
     },
 ];
 
-
-
-//4.Actualizar
-export const updateProducto = [
+//4. Obtener producto por ID con tipo de producto relacionado
+export const getAllProductoWithTipProducto = [
     validatorHandler(getProductoSchema, "params"),
-    validatorHandler(updateProductoSchema, "body"),
     async (req, resp) => {
         const { id } = req.params;
-        const { producto, dimensiones, descripcion, id_tipo_producto } = req.body;
         try {
-            // Obtener el tipo de producto actual
-            const updateProducto = await productoSchema.findById(id);
-            if (!updateProducto) {
-                return resp.status(404).json({ message: "Tipo de producto no encontrdo" });
+            const producto = await producto_model.findById(id).populate("tipo_producto"); // Usar populate para incluir el tipo de producto relacionado
+            if (!producto) {
+                return resp.status(404).json({ message: "Producto no encontrado" });
             }
-            // Si no se proporcionan id del tipo de producto en la solicitud, mantener el id_usuario actual
-            const updateTipProducto =
-                id_tipo_producto !== undefined ? id_tipo_producto : updateProducto.id_tipo_producto;
-            const tipProductopdate = await productoSchema.updateOne(
-                { _id: id },
-                { $set: { producto, dimensiones, descripcion, id_tipo_producto: updateTipProducto } }
-            );
-            if (tipProductopdate.matchedCount === 0) {
-                return resp.status(404).json({ message: "Tipo de producto no encontrado" });
-            }
-            if (tipProductopdate.modifiedCount === 0) {
-                return resp
-                    .status(400)
-                    .json({ message: "No se realizaron cambios en el tipo de producto" });
-            }
-            resp.status(200).json({ message: "Tipo de producto actualizado correctamente" });
+            resp.json(producto);
         } catch (error) {
             resp.status(500).json({ message: error.message });
         }
     },
 ];
 
-
-//5.Borrar
-export const deleteProducto = [
-    validatorHandler(deleteProductoSchema, "params"),
-
+//5. Actualizar producto
+export const updateProducto = [
+    validatorHandler(getProductoSchema, "params"),
+    validatorHandler(updateProductoSchema, "body"),
     async (req, resp) => {
         const { id } = req.params;
         try {
-            const result = await productoSchema.deleteOne({ _id: id });
+            const updatedProducto = await producto_model.findByIdAndUpdate(id, req.body, { new: true }); // Usar findByIdAndUpdate directamente
+            if (!updatedProducto) {
+                return resp.status(404).json({ message: "Producto no encontrado" });
+            }
+            resp.status(200).json({ message: "Producto actualizado correctamente", data: updatedProducto });
+        } catch (error) {
+            resp.status(500).json({ message: error.message });
+        }
+    },
+];
+
+//6. Borrar producto
+export const deleteProducto = [
+    validatorHandler(deleteProductoSchema, "params"),
+    async (req, resp) => {
+        const { id } = req.params;
+        try {
+            const result = await producto_model.deleteOne({ _id: id });
             if (result.deletedCount === 0) {
                 return resp.status(404).json({ message: "Producto no encontrado" });
             }
