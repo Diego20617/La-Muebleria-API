@@ -1,5 +1,5 @@
-### Crear un nuevo producto
 POST http://localhost:3005/api/producto
+Content-Type: application/json
 
 {
   "name": "Televisor Smart",
@@ -17,19 +17,21 @@ POST http://localhost:3005/api/producto
   "tipo_producto_id": "673cd2c95791df6971663a20"
 }
 
+
 ### Obtener todos los productos
 GET http://localhost:3005/api/producto
 
 ### Obtener un producto por ID
-GET http://localhost:3005/api/producto/674609109e416253c5049b21
+GET http://localhost:3005/api/producto/67f4104eb103f29cb5d0a2bc
 
 ### Actualizar un producto por ID
-PUT http://localhost:3005/api/producto/674609109e416253c5049b21
+PUT http://localhost:3005/api/producto/67f4104eb103f29cb5d0a2bc
+Content-Type: application/json
 
 {
   "name": "Televisor OLED",
   "category": "Electrónicos",
-  "price": "1500",
+  "price": "5000",
   "stock": "40",
   "description": "Televisor OLED con resolución 4K",
   "color": "Gris",
@@ -43,4 +45,5 @@ PUT http://localhost:3005/api/producto/674609109e416253c5049b21
 }
 
 ### Eliminar un producto por ID
-DELETE http://localhost:3005/api/producto/674609109e416253c5049b21
+DELETE http://localhost:3005/api/producto/67f4104eb103f29cb5d0a2bc
+
