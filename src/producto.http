@@ -44,12 +44,3 @@ PUT http://localhost:3005/api/producto/674609109e416253c5049b21
 
 ### Eliminar un producto por ID
 DELETE http://localhost:3005/api/producto/674609109e416253c5049b21
-
-{
-  "nombre": "Televisor OLED",
-  "precio": 1500,
-  "descripcion": "Televisor OLED con resolución 4K",
-  "tipo_producto_id": "673cd2c95791df6971663a20"
-}
-###
-DELETE http://localhost:3005/api/producto/674609109e416253c5049b21 HTTP/1.1
