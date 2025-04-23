@@ -1,5 +1,12 @@
 import express from "express";
-import { deleteUsuario, updateUsuario, getAllUsuario, getUsuario, createUsuario, getAllUusarioWithRol } from '../controller/usuario_controller.js'
+import { 
+  deleteUsuario, 
+  updateUsuario, 
+  getAllUsuario, 
+  getUsuario, 
+  createUsuario, 
+  getAllUsuarioWithRol // Corregido el nombre del controlador
+} from '../controller/usuario_controller.js'
 import { verifyJWT, verifyRole } from '../config/authMiddleware.js';
 const router = express.Router();
 
@@ -104,7 +111,7 @@ router.post("/usuario", createUsuario);
  * 
  */
 //2.Creamos la ruta para obtener todos los documentos de mi bdd en la colection usuario
-router.get("/usuario",verifyJWT, verifyRole(['Administrador']), getUsuario);
+router.get("/usuario", verifyJWT, verifyRole(['Administrador']), getUsuario);
 
 // 3.Creamos la ruta para consultar un documento de mi bdd en la coleccion usuario
 /**
@@ -158,7 +165,7 @@ router.get("/usuario/:id", verifyJWT, verifyRole(['Administrador']), getAllUsuar
  *       404:
  *         description: Usuario no encontrado
  */
-router.get("/usuario/:id/rol", verifyJWT, verifyRole(['Administrador']), getAllUusarioWithRol);
+router.get("/usuario/:id/rol", verifyJWT, verifyRole(['Administrador']), getAllUsuarioWithRol);
 
 /**
 * @swagger
@@ -192,7 +199,7 @@ router.get("/usuario/:id/rol", verifyJWT, verifyRole(['Administrador']), getAllU
 */
 
 // 4.Creamos la ruta para actualizar un documento en la coleccion usuario
-router.put("/usuario/:id",verifyJWT, verifyRole(['Administrador']), updateUsuario);
+router.put("/usuario/:id", verifyJWT, verifyRole(['Administrador']), updateUsuario);
 
 
 /**

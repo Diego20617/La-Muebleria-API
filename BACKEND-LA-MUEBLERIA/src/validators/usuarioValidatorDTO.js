@@ -49,29 +49,34 @@ const correo = Joi.string() // Validar que sea de tipo string
     "any.required": "El correo es un campo requerido",
   });
 
+// Corregido para ser coherente con el modelo que lo define como Number
 const num_doc = Joi.string()
   .min(10)
-  .required()
   .max(10)
+  .pattern(/^\d+$/) // Solo dígitos
+  .required()
   .messages({
-    "number.base": "El numero de documento debe ser un número.",
-    "number.integer": "El numero de documento no puede contener decimales",
-    "number.min": "El nuumero de documento debe ser mayor o igual a 1.",
-    "number.max": "El numero de documento no puede exceder 10.",
+    "string.base": "El numero de documento debe ser un texto numérico.",
+    "string.empty": "El numero de documento no puede estar vacío.",
+    "string.min": "El numero de documento debe tener al menos 10 caracteres.",
+    "string.max": "El numero de documento no puede exceder 10 caracteres.",
+    "string.pattern.base": "El numero de documento solo puede contener dígitos.",
     "any.required": "El num_doc es un campo requerido",
   });
 
+// Corregido para permitir caracteres especiales sin contradecirse
 const contraseña = Joi.string() // Validar que sea de tipo string
   .min(3)
   .max(20)
-  .pattern(/^[A-Za-záéíóúÁÉÍÓÚñÑ\s0-9!@#$%^&*()_+-=]+$/)
-  .alphanum()
+  .pattern(/^[A-Za-z0-9!@#$%^&*()_+\-=]+$/) // Permite alfanuméricos y caracteres especiales
   .required()
   .messages({
     "string.min": "La contraseña debe tener por lo menos 3 caracteres",
     "string.max": "La contraseña no puede exceder los 20 caracteres.",
+    "string.pattern.base": "La contraseña solo puede contener letras, números y caracteres especiales comunes.",
     "any.required": "La contraseña es un campo requerido",
   });
+
 const id_rol = Joi.array()
   .items(
     Joi.string()
@@ -80,7 +85,7 @@ const id_rol = Joi.array()
   .messages({
     "array.base": "id_rol debe ser un array",
     "string.pattern.base":
-      "Cada id_cliente debe ser un ID de MongoDB válido (24 caracteres hexadecimales)",
+      "Cada id_rol debe ser un ID de MongoDB válido (24 caracteres hexadecimales)",
   });
 
 //Ahora crearemos las validaciones para los métodos de la lógica

@@ -1,5 +1,6 @@
 import mongoose from "mongoose";
 import bcrypt from 'mongoose-bcrypt';
+
 const usuario_model = mongoose.Schema({
     nombres: {
         type: String,
@@ -14,7 +15,7 @@ const usuario_model = mongoose.Schema({
         required: true,
     },
     num_doc: {
-        type: Number,
+        type: Number, // Mantiene type Number
         required: true,
     },
     contraseña: {
@@ -27,7 +28,7 @@ const usuario_model = mongoose.Schema({
           type: mongoose.Schema.Types.ObjectId,
           ref: "rol",
         },
-      ],
+    ],
 });
 
 usuario_model.plugin(bcrypt);

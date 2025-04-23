@@ -1,5 +1,5 @@
 import usuario_model from "../models/usuario_model.js";
-import { validatorHandler} from "../middleware/validator.handler.js";
+import { validatorHandler } from "../middleware/validator.handler.js";
 import bcrypt from 'bcryptjs'; 
 import {
   createUsuarioSchema,
@@ -25,11 +25,11 @@ export const createUsuario = [
       const hashedPassword = await bcrypt.hash(contraseña, SALT_ROUNDS);
 
       // Crear nuevo usuario
-      let nuevoUsuario = new Usuario({
+      let nuevoUsuario = new usuario_model({
         nombres,
         apellidos,
         correo,
-        num_doc,
+        num_doc: Number(num_doc), // Asegurando que sea número
         contraseña: hashedPassword, // Guardamos la contraseña hasheada
         id_rol,
       });
@@ -43,26 +43,26 @@ export const createUsuario = [
       });
     } catch (err) {
       console.error(err);
-      res.status(500).json({ message: "Error al crear el usuario:"});
+      res.status(500).json({ message: "Error al crear el usuario:", error: err.message });
     }
   },
 ];
-
-
 
 // 2. Obtener todos los usuarios con el rol completo
 export const getUsuario = async (req, resp) => {
   try {
     const usuarios = await usuario_model
       .find()
-      .populate("id_rol", "rol") // Traer solo el campo 'nombre' del rol
+      .populate("id_rol", "rol") // Traer solo el campo 'rol' del rol
       .lean(); // Convierte el resultado en un objeto JavaScript puro
 
-    // Transformar el campo 'id_rol' para que sea un string con el nombre del rol
+    // Transformar el campo 'id_rol' para que sea un array de roles
     const usuariosConRolNombre = usuarios.map((usuario) => {
       return {
         ...usuario,
-        id_rol: usuario.id_rol ? usuario.id_rol.rol : null, // Extraer solo el nombre
+        id_rol: usuario.id_rol 
+          ? usuario.id_rol.map(rol => rol.rol || null) 
+          : [], // Manejar como array
       };
     });
 
@@ -71,7 +71,6 @@ export const getUsuario = async (req, resp) => {
     resp.status(500).json({ message: error.message });
   }
 };
-
 
 //3.Obtener por id
 export const getAllUsuario = [
@@ -89,8 +88,12 @@ export const getAllUsuario = [
           message: "Usuario no encontrado",
         });
       }
-  // Ajustar el campo 'id_rol' para que sea un string
-  usuario.id_rol = usuario.id_rol ? usuario.id_rol.rol : null;
+      
+      // Ajustar el campo 'id_rol' para que sea un array de strings
+      usuario.id_rol = usuario.id_rol 
+        ? usuario.id_rol.map(rol => rol.rol || null) 
+        : [];
+      
       resp.json(usuario);
     } catch (error) {
       resp.status(500).json({
@@ -100,7 +103,7 @@ export const getAllUsuario = [
   },
 ];
 
-export const getAllUusarioWithRol = [
+export const getAllUsuarioWithRol = [
   validatorHandler(getUsuarioSchema, "params"),
   async (req, resp) => {
     const { id } = req.params;
@@ -116,7 +119,6 @@ export const getAllUusarioWithRol = [
     }
   },
 ];
-
 
 // 4. Actualizar usuario y devolver el rol completo
 export const updateUsuario = [
@@ -151,7 +153,7 @@ export const updateUsuario = [
             nombres,
             apellidos,
             correo,
-            num_doc,
+            num_doc: Number(num_doc), // Asegurando que sea número
             contraseña: hashedPassword, // Actualizar la contraseña hasheada
             id_rol: updatedRol,
           },
@@ -161,12 +163,12 @@ export const updateUsuario = [
       // Obtener el usuario actualizado y popular solo el nombre del rol
       const usuarioActualizado = await usuario_model
         .findById(id)
-        .populate("id_rol", "rol") // Traer solo el campo 'nombre' del rol
+        .populate("id_rol", "rol") // Traer solo el campo 'rol' del rol
         .lean(); // Convertir el documento en un objeto plano
 
-      // Si el rol existe, reemplazar el id_rol con solo el nombre del rol
+      // Manejar el array de roles
       if (usuarioActualizado.id_rol) {
-        usuarioActualizado.id_rol = usuarioActualizado.id_rol.rol;
+        usuarioActualizado.id_rol = usuarioActualizado.id_rol.map(rol => rol.rol || null);
       }
 
       resp.status(200).json({
@@ -179,12 +181,9 @@ export const updateUsuario = [
   },
 ];
 
-
-
 //5.Borrar
 export const deleteUsuario = [
   validatorHandler(deleteUsuarioSchema, "params"),
-
   async (req, resp) => {
     const { id } = req.params;
     try {
