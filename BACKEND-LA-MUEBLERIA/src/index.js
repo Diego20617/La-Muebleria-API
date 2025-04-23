@@ -19,7 +19,6 @@ import { swaggerUI, swaggerJSDOCs, swaggerSpec } from "./config/swagger.js";
 
 const app = express();
 const corsOptions = {
-  // origin: "http://localhost:5173",
   origin: "*",
   methods: "GET,HEAD,PUT,PATCH,POST,DELETE",
   optionsSuccessStatus: 200,
@@ -27,10 +26,8 @@ const corsOptions = {
 app.use(express.json());
 app.use(cors(corsOptions));
 
-// Middleware para incluir la documentación de Swagger
 app.use('/api-docs', swaggerUI.serve, swaggerUI.setup(swaggerSpec));
 
-// middelware para incorporar como prefijo la silaba "/api" a cada endpoint
 app.use("/api", usuarioRoutes);
 app.use("/api", tip_docRoutes);
 app.use("/api", estadoRoutes);
@@ -45,25 +42,14 @@ app.use("/api", MaterialRoutes);
 app.use("/api", tipo_producto_routes);
 app.use('/api/autenticacion', autenticationRouter);
 
-
-// Middleware para manejar datos URL-encoded
 app.use(bodyParser.urlencoded({ extended: true }));
 
-// const clientOptions = {
-// serverApi : {
-//   version : "1",
-//   strict : true,
-//   deprecationErrors: true,
-// },
-
-//Ruta base del APIWEB, nuestro endpoint base
 app.get("/", (req, res) => {
   res.send("<h1>Bienvenido a mi API-WEB</h1>");
 });
 
-app.listen(port, () => {
-  console.log(
-    `Se inicio el servidos, y esta eschuchando por el puerto ${port}`
-  );
-  swaggerJSDOCs(app, 3005);
+// ÚNICO CAMBIO REALIZADO (2 modificaciones en esta parte):
+app.listen(port, '0.0.0.0', () => {
+  console.log(`Se inicio el servidos, y esta eschuchando por el puerto ${port}`);
+  swaggerJSDOCs(app, port); // Cambiado 3005 por port
 });
