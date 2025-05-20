@@ -1,9 +1,9 @@
 import Joi from "joi";
 
 // Validaciones
-const name = Joi.string().min(1).max(100).required();
+const name = Joi.string().min(3).max(100).required();
 const category = Joi.string().allow(''); // Permite string vacío
-const price = Joi.string().min(1).required();
+const price = Joi.string().required();
 const stock = Joi.string().allow(''); // Permite string vacío
 const description = Joi.string().max(500).allow(''); // Permite string vacío
 const color = Joi.string().allow(''); // Permite string vacío

@@ -46,3 +46,4 @@ Content-Type: application/json
 
 ### Eliminar un producto por ID
 DELETE http://localhost:3005/api/producto/67f4104eb103f29cb5d0a2bc
+

@@ -1,7 +1,7 @@
 import Joi from "joi";
 
 export const createUsuarioConProductoSchema = Joi.object({
-    id_usuario: Joi.string().required().description("ID del usuario"),
+    id_cliente: Joi.string().required().description("ID del cliente"),
     id_producto: Joi.string().required().description("ID del producto"),
 });
 

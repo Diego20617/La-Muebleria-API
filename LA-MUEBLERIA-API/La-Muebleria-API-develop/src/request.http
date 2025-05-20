@@ -1,5 +1,5 @@
 # Crear una nueva relación usuario-producto
-POST http://localhost:3005/api/usuario-con-producto
+POST http://localhost:3005/api/usuario_con_producto
 Content-Type: application/json
 
 {
@@ -10,16 +10,16 @@ Content-Type: application/json
 ###
 
 # Obtener todas las relaciones usuario-producto
-GET http://localhost:3005/api/usuario-con-producto
+GET http://localhost:3005/api/usuario_con_producto
 
 ###
 
 # Obtener una relación usuario-producto por ID
-GET http://localhost:3005/api/usuario-con-producto/64f8c06f42a0b8e6f52f004e
+GET http://localhost:3005/api/usuario_con_producto/64f8c06f42a0b8e6f52f004e
 # Reemplaza el ID con uno válido
 
 ###
 
 # Eliminar una relación usuario-producto por ID
-DELETE http://localhost:3005/api/usuario-con-producto/64f8c06f42a0b8e6f52f004e
+DELETE http://localhost:3005/api/usuario_con_producto/64f8c06f42a0b8e6f52f004e
 # Reemplaza el ID con uno válido

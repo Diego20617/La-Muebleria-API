@@ -25,7 +25,7 @@ export const getAllUsuarioConProducto = async (req, res) => { // Nombre corregid
     try {
         const data = await usuarioConProducto_model
             .find()
-            .populate("id_usuario")
+            .populate("id_cliente")
             .populate("id_producto");
         res.json(data);
     } catch (error) {
