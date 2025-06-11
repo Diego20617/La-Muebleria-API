@@ -1,8 +1,0 @@
-### Mirar el JWT
-POST http://localhost:3005/api/autenticacion/login HTTP/1.1
-Content-Type: application/json
-
-{
-  "correo": "sntia2005@gmail.com",
-  "contraseña": "elloco5699"
-}
