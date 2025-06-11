@@ -1,0 +1,9 @@
+POST http://localhost:3001/api/send-email
+Content-Type: application/json
+
+{
+  "to": "danielrodriguezsanchez2003@gmail.com",
+  "subject": "Prueba de correo desde el panel",
+  "text": "Este es un correo de prueba enviado desde el panel de administración",
+  "html": "<h1>Prueba de correo</h1><p>Este es un correo de prueba enviado desde el panel de administración</p>"
+} 
