@@ -1,0 +1,17 @@
+###
+POST http://localhost:3005/api/resena HTTP/1.1
+Content-Type: application/json
+
+{
+    "resena": "Producto excelente, muy recomendable.",
+    "id_producto": "645cd12c3f791aa71b567c20"
+}
+
+###
+GET http://localhost:3005/api/resena HTTP/1.1
+
+###
+GET http://localhost:3005/api/resena/645cd12c3f791aa71b567c20 HTTP/1.1
+
+###
+DELETE http://localhost:3005/api/resena/645cd12c3f791aa71b567c20 HTTP/1.1

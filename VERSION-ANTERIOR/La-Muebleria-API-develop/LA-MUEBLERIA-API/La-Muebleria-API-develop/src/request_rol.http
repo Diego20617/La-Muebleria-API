@@ -1,0 +1,30 @@
+###  
+
+POST http://localhost:3005/api/rol HTTP/1.1
+Content-Type: application/json
+
+{
+    "rol" : "Cliente",
+    "id_estado" : ["673fc2f38b010d2690f9cfb7"]
+}
+
+###
+GET http://localhost:3005/api/rol HTTP/1.1 
+#metodo para mostrar todos los datos existentes en la base de datos
+
+###
+GET http://localhost:3005/api/rol/673fc3068b010d2690f9cfb9 HTTP/1.1
+#Metodo para mostrar los datos de un id especifico
+
+###
+PUT http://localhost:3005/api/rol/673fc3068b010d2690f9cfb9 HTTP/1.1
+Content-Type: application/json
+
+{
+    "rol" : "Administrador",
+    "id_estado" : ["6722b8989785ab3c04a1ddd4"]
+}
+
+###
+DELETE http://localhost:3005/api/rol/673fc3068b010d2690f9cfb9 HTTP/1.1
+#Metodo para borrar los datos de un id en especifico
